@@ -56,7 +56,6 @@ public class ClientPaiement extends JFrame
         model.addColumn("Id Client");
         model.addColumn("Date");
         model.addColumn("Montant (€)");
-        model.addColumn("Payé");
 
         ResultatTable.setModel(model);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
