@@ -8,6 +8,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ClientPaiement extends JFrame
 {
@@ -28,6 +30,14 @@ public class ClientPaiement extends JFrame
     private JLabel VisaLabel;
     private JTextField NomCliTxt;
     private JTextField VisaTxt;
+    private JButton Rchbutton;
+    private JTextField NomTxt;
+    private JTextField MDPtxt;
+    private JButton LoginButton;
+    private JButton LogoutButton;
+    private JLabel LoginLabel;
+    private JLabel PasswordLabel;
+    private JPanel LoginPanel;
 
 
     public ClientPaiement()
@@ -40,6 +50,8 @@ public class ClientPaiement extends JFrame
         NumCliTxt.setBorder(border);
         NomCliTxt.setBorder(border);
         VisaTxt.setBorder(border);
+        MDPtxt.setBorder(border);
+        NomTxt.setBorder(border);
 
         /*int width = ResultatTable.getWidth();
         int newHeight = 300;
@@ -84,6 +96,18 @@ public class ClientPaiement extends JFrame
 
             }
         });*/
+
+
+        Rchbutton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+
+            }
+        });
+
+
 
     }
 
