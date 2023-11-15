@@ -1,8 +1,10 @@
 package Messages;
 
+import Interface.Requete;
+
 import java.io.Serializable;
 
-public class RequeteLOGIN implements Serializable {
+public class RequeteLOGIN implements Requete {
 
     private String nom_employer;
     private String mdp_employer;

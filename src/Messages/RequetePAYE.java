@@ -1,8 +1,10 @@
 package Messages;
 
+import Interface.Requete;
+
 import java.io.Serializable;
 
-public class RequetePAYE implements Serializable {
+public class RequetePAYE implements Requete {
 
     private int idFacture;
     private String nom_Client;

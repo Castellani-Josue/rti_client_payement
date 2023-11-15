@@ -1,9 +1,11 @@
 package Messages;
 
 
+import Interface.Reponse;
+
 import java.io.Serializable;
 
-public class ReponseLOGIN implements Serializable {
+public class ReponseLOGIN implements Reponse {
     private boolean Valide;
     private int cas = -1;
 

@@ -1,8 +1,10 @@
 package Messages;
 
+import Interface.Reponse;
+
 import java.io.Serializable;
 
-public class ReponsePAYE implements Serializable {
+public class ReponsePAYE implements Reponse {
 
     private boolean valide;
     public ReponsePAYE(boolean Valide) {
