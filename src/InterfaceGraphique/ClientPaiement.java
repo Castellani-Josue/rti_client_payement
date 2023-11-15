@@ -1,5 +1,7 @@
 package InterfaceGraphique;
 
+import Messages.*;
+
 import com.formdev.flatlaf.FlatDarculaLaf;
 
 import javax.swing.*;
@@ -21,8 +23,6 @@ import java.text.DecimalFormat;
 import static Socket.socket.Receive;
 import static Socket.socket.Send;
 import static Socket.socket.ClientSocket;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ClientPaiement extends JFrame
 {
@@ -114,14 +114,14 @@ public class ClientPaiement extends JFrame
 
     public boolean Logout()
     {
-        String requete = "LOGOUT";
+        RequeteLOGOUT requeteLOGOUT = new RequeteLOGOUT("LOGOUT");
 
         //---------------------ENVOIE---------------------------//
 
         try
         {
-            DataOutputStream fluxSortie = new DataOutputStream(new BufferedOutputStream(sClient.getOutputStream()));
-            Send(requete,fluxSortie);
+            ObjectOutputStream fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+            Send(requeteLOGOUT,fluxSortie);
         }
         catch (IOException e1)
         {
@@ -211,16 +211,14 @@ public class ClientPaiement extends JFrame
                 else
                 {
                     sClient = ClientSocket();
-
-                    String requete = "LOGIN#" + nomEmp + "#" + mdpEmp;
-                    String reponse = "";
+                    RequeteLOGIN requeteLOGIN = new RequeteLOGIN(nomEmp, mdpEmp);
 
 
                     //-------------------Envoie-------------------------
                     try
                     {
-                        DataOutputStream fluxSortie = new DataOutputStream(new BufferedOutputStream(sClient.getOutputStream()));
-                        Send(requete,fluxSortie);
+                        ObjectOutputStream fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+                        Send(requeteLOGIN,fluxSortie);
                     }
                     catch (IOException e1)
                     {
@@ -236,9 +234,10 @@ public class ClientPaiement extends JFrame
                     //--------------------Recepetion------------------------
                     try
                     {
-                        DataInputStream fluxEntree = new DataInputStream(new BufferedInputStream(sClient.getInputStream()));
-                        reponse = Receive(fluxEntree);
+                        ObjectInputStream fluxEntree = new ObjectInputStream(sClient.getInputStream());
+                        ReponseLOGIN reponseLOGIN = (ReponseLOGIN) Receive(fluxEntree);
 
+                        String reponse = reponseLOGIN.getValide();
                         String[] data = reponse.split("#");
                         if(data[1].equals("ok"))
                         {
@@ -248,12 +247,22 @@ public class ClientPaiement extends JFrame
                         else if (data[1].equals("ko"))
                         {
                             //affichage de l'erreur
-                            JOptionPane.showMessageDialog(null, data[2], "Erreur", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, reponseLOGIN.getErrmessage() , "Erreur", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                     catch (IOException e1)
                     {
                         System.err.println("Erreur de RECEIVE !" + e1.getMessage());
+                        try {
+                            sClient.close();
+                        } catch (IOException e2)
+                        {
+                            throw new RuntimeException(e2);
+                        }
+                    }
+                    catch (ClassNotFoundException classNotFoundException)
+                    {
+                        System.err.println("Erreur de RECEIVE !" + classNotFoundException.getMessage());
                         try {
                             sClient.close();
                         } catch (IOException e2)
@@ -297,14 +306,14 @@ public class ClientPaiement extends JFrame
                 }
                 else
                 {
-                    String requete = "GETFACTURE#" + stridClient;
+                    RequeteRECHERCHE requeteRECHERCHE = new RequeteRECHERCHE(Integer.parseInt(stridClient));
 
                     //----------------Envoie----------------------
 
                     try
                     {
-                        DataOutputStream fluxSortie = new DataOutputStream(new BufferedOutputStream(sClient.getOutputStream()));
-                        Send(requete,fluxSortie);
+                        ObjectOutputStream fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+                        Send(requeteRECHERCHE,fluxSortie);
                     }
                     catch (IOException e1)
                     {
@@ -318,7 +327,6 @@ public class ClientPaiement extends JFrame
                     }
 
                     //------------------Reception-------------------
-                    String reponse = "";
 
                     //Format reponse : GETFACTURE#ok#idFacture, idClient, date, montant, paye$idFacture, idClient...
 
@@ -329,8 +337,10 @@ public class ClientPaiement extends JFrame
 
                     try
                     {
-                        DataInputStream fluxEntree = new DataInputStream(new BufferedInputStream(sClient.getInputStream()));
-                        reponse = Receive(fluxEntree);
+                        ObjectInputStream fluxEntree = new ObjectInputStream(sClient.getInputStream());
+                        ReponseRECHERCHE reponseRECHERCHE = (ReponseRECHERCHE) Receive(fluxEntree);
+
+                        String reponse = reponseRECHERCHE.getReponse();
 
                         String[] testOK = reponse.split("#");
                         if(testOK[1].equals("ko"))
@@ -363,6 +373,14 @@ public class ClientPaiement extends JFrame
                     catch (IOException e1)
                     {
                         System.err.println("Erreur de RECEIVE !" + e1.getMessage());
+                        try {
+                            sClient.close();
+                        } catch (IOException e2)
+                        {
+                            throw new RuntimeException(e2);
+                        }
+                    } catch (ClassNotFoundException classNotFoundException) {
+                        System.err.println("Erreur de RECEIVE !" + classNotFoundException.getMessage());
                         try {
                             sClient.close();
                         } catch (IOException e2)
@@ -402,12 +420,12 @@ public class ClientPaiement extends JFrame
                     //----------------Envoie----------------------
                     idFacture = (int) ResultatTable.getValueAt(factureSelectionne, 0);
 
-                    String requete = "PAYFACTURE#" + idFacture + "#" + nomClient + "#" + visa;
+                    RequetePAYE requetePAYE = new RequetePAYE(idFacture, nomClient, visa);
 
                     try
                     {
-                        DataOutputStream fluxSortie = new DataOutputStream(new BufferedOutputStream(sClient.getOutputStream()));
-                        Send(requete,fluxSortie);
+                        ObjectOutputStream fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+                        Send(requetePAYE,fluxSortie);
                     }
                     catch (IOException e1)
                     {
@@ -421,13 +439,13 @@ public class ClientPaiement extends JFrame
                     }
 
                     //-----------------reponse---------------------
-                    String reponse = "";
+
                     try
                     {
-                        DataInputStream fluxEntree = new DataInputStream(new BufferedInputStream(sClient.getInputStream()));
-                        reponse = Receive(fluxEntree);
+                        ObjectInputStream fluxEntree = new ObjectInputStream(sClient.getInputStream());
+                        ReponsePAYE reponsePAYE = (ReponsePAYE) Receive(fluxEntree);
 
-                        //Format reponse = PAYFACTURE#ok
+                        String reponse = reponsePAYE.getValide();
 
                         String[] visaok = reponse.split("#");
                         if(visaok[1].equals("ok"))
@@ -442,6 +460,14 @@ public class ClientPaiement extends JFrame
                     catch (IOException e1)
                     {
                         System.err.println("Erreur de RECEIVE !" + e1.getMessage());
+                        try {
+                            sClient.close();
+                        } catch (IOException e2)
+                        {
+                            throw new RuntimeException(e2);
+                        }
+                    } catch (ClassNotFoundException classNotFoundException) {
+                        System.err.println("Erreur de RECEIVE !" + classNotFoundException.getMessage());
                         try {
                             sClient.close();
                         } catch (IOException e2)
@@ -471,14 +497,6 @@ public class ClientPaiement extends JFrame
             }
         });
     }
-    /*public static boolean TestVisa (String numeroCarte) {
-        String visaCardRegex = "^4[0-9]{12}(?:[0-9]{3})?$";
-
-        Pattern pattern = Pattern.compile(visaCardRegex);
-        Matcher matcher = pattern.matcher(numeroCarte);
-
-        return matcher.matches();
-    }*/
     public static boolean estChiffresPositifs(String tmp)
     {
         // Utilisation d'une expression régulière pour vérifier si la chaîne est composée uniquement de chiffres positifs

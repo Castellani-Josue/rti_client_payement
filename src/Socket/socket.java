@@ -1,10 +1,10 @@
 package Socket;
 
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+
+import Messages.*;
 
 public final class socket
 {
@@ -30,41 +30,19 @@ public final class socket
     {
         //empêche l'instanciation de la classe
     }
-    public static void Send(String message, DataOutputStream envoi) throws IOException
+    public static void Send(Object obj, ObjectOutputStream envoi) throws IOException
     {
-        message = message + "#)";
-        envoi.write(message.getBytes());
+        envoi.writeObject(obj);
         envoi.flush();
         System.out.println("Réponse envoyée");
-
-
     }
 
-    public static String Receive(DataInputStream reception) throws IOException
-    {
+    public static Object Receive(ObjectInputStream reception) throws IOException, ClassNotFoundException {
 
-        StringBuffer buffer = new StringBuffer();
-        boolean EOT = false;
-        while(!EOT)
-        {
-            byte b1 = reception.readByte();
-            System.out.println("b1 : --" + (char)b1 + "--");
-            if(b1 == (byte)'#')
-            {
-                byte b2 = reception.readByte();
-                System.out.println("b2 : --" + (char)b2 + "--");
-                if(b2 ==(byte)')')
-                    EOT = true;
-                else
-                {
-                    buffer.append((char)b1);
-                    buffer.append((char)b2);
-                }
-            }
-            else buffer.append((char)b1);
-        }
-        String requete = buffer.toString();
-        System.out.println("Reçu : --" + requete + "--");
+        Object requete = reception.readObject();
+
+        System.out.println("Réponse envoyée");
+
         return requete;
     }
 
