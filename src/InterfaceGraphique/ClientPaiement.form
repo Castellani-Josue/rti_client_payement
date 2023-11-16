@@ -74,6 +74,7 @@
             <properties>
               <background color="-8388480"/>
               <foreground color="-16777216"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="f72f6" class="javax.swing.JButton" binding="Rchbutton">
