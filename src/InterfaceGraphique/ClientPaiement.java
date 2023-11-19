@@ -52,6 +52,9 @@ public class ClientPaiement extends JFrame
     private JLabel PasswordLabel;
     private JPanel LoginPanel;
 
+    ObjectOutputStream fluxSortie;
+    ObjectInputStream fluxEntree;
+
     private Socket sClient;
 
     private boolean logged = false;
@@ -120,7 +123,7 @@ public class ClientPaiement extends JFrame
 
         try
         {
-            ObjectOutputStream fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+            fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
             Send(requeteLOGOUT,fluxSortie);
         }
         catch (IOException e1)
@@ -145,12 +148,17 @@ public class ClientPaiement extends JFrame
 
         //Dimension num = new Dimension(50,20);
         //NumCliTxt.setPreferredSize(num);
+        Color oceanBlueColor = new Color(30, 144, 255);
+
+
         Border border = new LineBorder(Color.BLACK, 1);
         NumCliTxt.setBorder(border);
         NomCliTxt.setBorder(border);
         VisaTxt.setBorder(border);
         MDPtxt.setBorder(border);
         NomTxt.setBorder(border);
+
+
 
         /*int width = ResultatTable.getWidth();
         int newHeight = 300;
@@ -217,7 +225,7 @@ public class ClientPaiement extends JFrame
                     //-------------------Envoie-------------------------
                     try
                     {
-                        ObjectOutputStream fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+                        fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
                         Send(requeteLOGIN,fluxSortie);
                     }
                     catch (IOException e1)
@@ -234,17 +242,17 @@ public class ClientPaiement extends JFrame
                     //--------------------Recepetion------------------------
                     try
                     {
-                        ObjectInputStream fluxEntree = new ObjectInputStream(sClient.getInputStream());
+                        fluxEntree = new ObjectInputStream(sClient.getInputStream());
                         ReponseLOGIN reponseLOGIN = (ReponseLOGIN) Receive(fluxEntree);
 
                         String reponse = reponseLOGIN.getValide();
                         String[] data = reponse.split("#");
-                        if(data[1].equals("ok"))
+                        if(data[1].equals("OK"))
                         {
                             JOptionPane.showMessageDialog(null, "Login réussi.", "LOGIN", JOptionPane.INFORMATION_MESSAGE);
                             loginOK();
                         }
-                        else if (data[1].equals("ko"))
+                        else if (data[1].equals("KO"))
                         {
                             //affichage de l'erreur
                             JOptionPane.showMessageDialog(null, reponseLOGIN.getErrmessage() , "Erreur", JOptionPane.ERROR_MESSAGE);
@@ -312,7 +320,7 @@ public class ClientPaiement extends JFrame
 
                     try
                     {
-                        ObjectOutputStream fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+                        fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
                         Send(requeteRECHERCHE,fluxSortie);
                     }
                     catch (IOException e1)
@@ -337,7 +345,7 @@ public class ClientPaiement extends JFrame
 
                     try
                     {
-                        ObjectInputStream fluxEntree = new ObjectInputStream(sClient.getInputStream());
+                        fluxEntree = new ObjectInputStream(sClient.getInputStream());
                         ReponseRECHERCHE reponseRECHERCHE = (ReponseRECHERCHE) Receive(fluxEntree);
 
                         String reponse = reponseRECHERCHE.getReponse();
@@ -424,7 +432,7 @@ public class ClientPaiement extends JFrame
 
                     try
                     {
-                        ObjectOutputStream fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+                        fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
                         Send(requetePAYE,fluxSortie);
                     }
                     catch (IOException e1)
@@ -442,7 +450,7 @@ public class ClientPaiement extends JFrame
 
                     try
                     {
-                        ObjectInputStream fluxEntree = new ObjectInputStream(sClient.getInputStream());
+                        fluxEntree = new ObjectInputStream(sClient.getInputStream());
                         ReponsePAYE reponsePAYE = (ReponsePAYE) Receive(fluxEntree);
 
                         String reponse = reponsePAYE.getValide();

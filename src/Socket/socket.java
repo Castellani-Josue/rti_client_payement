@@ -32,14 +32,14 @@ public final class socket
     {
         envoi.writeObject(obj);
         envoi.flush();
-        System.out.println("Réponse envoyée");
+        System.out.println("Requete envoyée");
     }
 
     public static Object Receive(ObjectInputStream reception) throws IOException, ClassNotFoundException {
 
         Object requete = reception.readObject();
 
-        System.out.println("Réponse envoyée");
+        System.out.println("Réponse reçue");
 
         return requete;
     }

@@ -2,7 +2,7 @@ package Messages;
 
 import Interface.Requete;
 
-import java.io.Serializable;
+
 
 public class RequeteLOGOUT implements Requete {
     private String Logout;

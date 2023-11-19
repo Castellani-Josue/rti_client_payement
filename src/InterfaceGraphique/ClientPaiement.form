@@ -6,7 +6,7 @@
       <xy x="48" y="54" width="749" height="356"/>
     </constraints>
     <properties>
-      <background color="-8388480"/>
+      <background color="-16763056"/>
     </properties>
     <border type="none"/>
     <children>
@@ -72,7 +72,7 @@
               </grid>
             </constraints>
             <properties>
-              <background color="-8388480"/>
+              <background color="-16763056"/>
               <foreground color="-16777216"/>
               <text value=""/>
             </properties>
@@ -119,7 +119,7 @@
               <component id="ea08e" class="javax.swing.JTable" binding="ResultatTable">
                 <constraints/>
                 <properties>
-                  <background color="-8388480"/>
+                  <background color="-16763056"/>
                 </properties>
               </component>
             </children>
@@ -199,7 +199,7 @@
               </grid>
             </constraints>
             <properties>
-              <background color="-8388480"/>
+              <background color="-16763056"/>
               <foreground color="-16777216"/>
             </properties>
           </component>
@@ -210,7 +210,7 @@
               </grid>
             </constraints>
             <properties>
-              <background color="-8388480"/>
+              <background color="-16763056"/>
               <foreground color="-16777216"/>
             </properties>
           </component>
@@ -275,7 +275,7 @@
               </grid>
             </constraints>
             <properties>
-              <background color="-8388480"/>
+              <background color="-16763056"/>
               <foreground color="-16777216"/>
             </properties>
           </component>
@@ -295,7 +295,7 @@
               </grid>
             </constraints>
             <properties>
-              <background color="-8388480"/>
+              <background color="-16763056"/>
               <foreground color="-16777216"/>
             </properties>
           </component>
