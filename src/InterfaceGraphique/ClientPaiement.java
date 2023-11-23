@@ -123,7 +123,8 @@ public class ClientPaiement extends JFrame
 
         try
         {
-            fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+            fluxSortie.flush();
+            //fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
             Send(requeteLOGOUT,fluxSortie);
         }
         catch (IOException e1)
@@ -292,13 +293,13 @@ public class ClientPaiement extends JFrame
                         System.err.println("Erreur dans le logout");
                         System.exit(1);
                     }
+                    NomTxt.setText("");
+                    MDPtxt.setText("");
                 }
                 else
                 {
                     JOptionPane.showMessageDialog(null, "Impossible de se logout (pas log)", "Erreur", JOptionPane.ERROR_MESSAGE);
                 }
-
-                logoutOK();
             }
         });
 
@@ -320,7 +321,8 @@ public class ClientPaiement extends JFrame
 
                     try
                     {
-                        fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+                        fluxSortie.flush();
+                        //fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
                         Send(requeteRECHERCHE,fluxSortie);
                     }
                     catch (IOException e1)
@@ -345,7 +347,7 @@ public class ClientPaiement extends JFrame
 
                     try
                     {
-                        fluxEntree = new ObjectInputStream(sClient.getInputStream());
+                        //fluxEntree = new ObjectInputStream(sClient.getInputStream());
                         ReponseRECHERCHE reponseRECHERCHE = (ReponseRECHERCHE) Receive(fluxEntree);
 
                         String reponse = reponseRECHERCHE.getReponse();
@@ -426,13 +428,14 @@ public class ClientPaiement extends JFrame
                     }
 
                     //----------------Envoie----------------------
-                    idFacture = (int) ResultatTable.getValueAt(factureSelectionne, 0);
+                    idFacture = Integer.parseInt((String) ResultatTable.getValueAt(factureSelectionne, 0));
 
                     RequetePAYE requetePAYE = new RequetePAYE(idFacture, nomClient, visa);
 
                     try
                     {
-                        fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+                        fluxSortie.flush();
+                        //fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
                         Send(requetePAYE,fluxSortie);
                     }
                     catch (IOException e1)
@@ -450,7 +453,7 @@ public class ClientPaiement extends JFrame
 
                     try
                     {
-                        fluxEntree = new ObjectInputStream(sClient.getInputStream());
+                        //fluxEntree = new ObjectInputStream(sClient.getInputStream());
                         ReponsePAYE reponsePAYE = (ReponsePAYE) Receive(fluxEntree);
 
                         String reponse = reponsePAYE.getValide();
@@ -483,6 +486,93 @@ public class ClientPaiement extends JFrame
                             throw new RuntimeException(e2);
                         }
                     }
+
+                    String stridClient = NumCliTxt.getText();
+
+                    RequeteRECHERCHE requeteRECHERCHE = new RequeteRECHERCHE(Integer.parseInt(stridClient));
+
+                    //----------------Envoie----------------------
+
+                    try
+                    {
+                        fluxSortie.flush();
+                        //fluxSortie = new ObjectOutputStream(sClient.getOutputStream());
+                        Send(requeteRECHERCHE,fluxSortie);
+                    }
+                    catch (IOException e1)
+                    {
+                        System.err.println("Erreur de SEND !" + e1.getMessage());
+                        try {
+                            sClient.close();
+                        } catch (IOException e2)
+                        {
+                            throw new RuntimeException(e2);
+                        }
+                    }
+
+                    //------------------Reception-------------------
+
+                    //Format reponse : GETFACTURE#ok#idFacture, idClient, date, montant, paye$idFacture, idClient...
+
+                    idFacture = 0;
+                    int idClient = 0;
+                    String date = "";
+                    float montant = 0.0F;
+
+                    try
+                    {
+                        //fluxEntree = new ObjectInputStream(sClient.getInputStream());
+                        ReponseRECHERCHE reponseRECHERCHE = (ReponseRECHERCHE) Receive(fluxEntree);
+
+                        String reponse = reponseRECHERCHE.getReponse();
+
+                        String[] testOK = reponse.split("#");
+                        if(testOK[1].equals("ko"))
+                        {
+                            JOptionPane.showMessageDialog(null, testOK[2], "Erreur", JOptionPane.ERROR_MESSAGE);
+                            System.exit(1);
+                        }
+
+                        viderTableFacture();
+
+                        //Format reponse : GETFACTURE#ok#idFacture, idClient, date, montant, paye
+                        String[] ElemCaddie = testOK[2].split("\\$");
+                        for (String elem : ElemCaddie)
+                        {
+                            elem = elem.replace("$", "");
+                            String[] UnElemCaddie = elem.split(",");
+
+                            if (UnElemCaddie.length >= 5)
+                            {
+
+                                idFacture = Integer.parseInt(UnElemCaddie[0]);
+                                idClient = Integer.parseInt(UnElemCaddie[1]);
+                                date = UnElemCaddie[2];
+                                montant = Float.parseFloat(UnElemCaddie[3]);
+
+                                ajouteFactureTable(idFacture, idClient, date, montant);
+                            }
+                        }
+                    }
+                    catch (IOException e1)
+                    {
+                        System.err.println("Erreur de RECEIVE !" + e1.getMessage());
+                        try {
+                            sClient.close();
+                        } catch (IOException e2)
+                        {
+                            throw new RuntimeException(e2);
+                        }
+                    } catch (ClassNotFoundException classNotFoundException) {
+                        System.err.println("Erreur de RECEIVE !" + classNotFoundException.getMessage());
+                        try {
+                            sClient.close();
+                        } catch (IOException e2)
+                        {
+                            throw new RuntimeException(e2);
+                        }
+                    }
+
                 }
             }
         });
@@ -497,6 +587,7 @@ public class ClientPaiement extends JFrame
                         System.err.println("Erreur dans le logout");
                         System.exit(1);
                     }
+                    logoutOK();
                 }
 
                 //fermeture de la fenêtre
