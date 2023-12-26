@@ -2,8 +2,6 @@ package Messages;
 
 import Interface.Requete;
 
-
-
 public class RequeteLOGOUT implements Requete {
     private String Logout;
     public RequeteLOGOUT(String logout)
